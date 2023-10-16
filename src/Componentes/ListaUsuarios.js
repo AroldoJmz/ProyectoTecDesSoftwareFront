@@ -1,53 +1,75 @@
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
-
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import Jquery from 'jquery';
 
-export default function ListaUsuarios() {
+import AgregarUsuario from './AgregarUsuario';
+import EditarUsuario from './EditarUsuario';
+import ActivarUsuario from './ActivarUsuario';
+
+import { FaTrashCan, FaPencil, FaCheck, FaXmark } from "react-icons/fa6";
+import EliminarUsuario from './EliminarUsuario';
+export default function Usuarios() {
     const [usuarios, setUsuarios] = useState([]);
-    const ListaUsuarios = async () => {
-        try {
-            const response = await axios.get('https://back-aroldo.onrender.com/api/listUsuarios');
 
-            const lista = {...response.data};
-            setUsuarios(lista);
-        } catch (err) {
-            console.error(err.message);
+    const userList = async () => {
+        try {
+            const response = await axios.get('http://localhost:5002/api/listUsuario');
+            const list = [...response.data];
+            setUsuarios(list); 
+        } catch (e) {
+            console.error(e.message);
         }
     };
 
     useEffect(() => {
-        ListaUsuarios();
+        userList();
     }, []);
 
     return (
         <>
-            <h1>Lista de usuarios</h1>
-            <table class="table table-hover table-bordered">
+        <div className='container'>
+            <div className='d-flex my-3'>
+                <AgregarUsuario reloadList={userList}/>&nbsp;
+                <h1>Lista de usuarios</h1>               
+            </div>
+            <table id='usersTable' className="table table-hover table-bordered">
                 <thead className=''>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Handle</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Activo</th>
+                        <th scope="col">Opciones</th>
                     </tr>
                 </thead>
                 <tbody className='table-group-divider'>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
+                    {usuarios.map(usuario => 
+                        <tr key={usuario.id} id={usuario.id}>
+                            <td>{}</td>
+                            <td>{usuario.nombre}</td>
+                            <td>{usuario.email}</td>
+                            <td>{<ActivarUsuario user={usuario} reloadList={userList}/>}</td>
+                            <td>
+                                <EditarUsuario user={usuario} reloadList={userList}/>&nbsp;
+                                <EliminarUsuario userId={usuario.id}/>
+                            </td>
+                        </tr>
+                    )}                   
                 </tbody>
                 <tfoot className='table-group-divider'>
                     <tr>
-                        <th scope="col"></th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Handle</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Activo</th>
+                        <th scope="col">Opciones</th>
                     </tr>
                 </tfoot>
             </table>
+        </div>
         </>
     )
 }
