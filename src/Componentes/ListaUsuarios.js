@@ -8,6 +8,7 @@ import Jquery from 'jquery';
 import AgregarUsuario from './AgregarUsuario';
 import EditarUsuario from './EditarUsuario';
 import ActivarUsuario from './ActivarUsuario';
+import CambiarContraseña from './CambiarContraseña';
 
 import { FaTrashCan, FaPencil, FaCheck, FaXmark } from "react-icons/fa6";
 import EliminarUsuario from './EliminarUsuario';
@@ -54,7 +55,8 @@ export default function Usuarios() {
                             <td>{<ActivarUsuario user={usuario} reloadList={userList}/>}</td>
                             <td>
                                 <EditarUsuario user={usuario} reloadList={userList}/>&nbsp;
-                                <EliminarUsuario userId={usuario.id}/>
+                                <EliminarUsuario userId={usuario.id}/>&nbsp;
+                                <CambiarContraseña user={usuario}/>
                             </td>
                         </tr>
                     )}                   

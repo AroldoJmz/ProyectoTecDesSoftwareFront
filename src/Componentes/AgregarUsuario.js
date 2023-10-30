@@ -19,6 +19,8 @@ export default function AgregarUsuario({reloadList}) {
         Jquery('#Name').val('');
         Jquery('#Email').val('');
         Jquery('#Password').val('');
+        document.getElementById("Email").style.backgroundColor = "";
+        document.getElementById("Email").style.borderColor = "";
     };
 
     const handleSubmit = async (e) => {
@@ -26,14 +28,19 @@ export default function AgregarUsuario({reloadList}) {
         try {
             const response = await axios.post('http://localhost:5002/api/saveUsuario', formData);
             if (response.status === 200) {
+                document.getElementById("Email").style.borderColor = "";
                 reloadList();
                 Swal.fire({
-                    icon: 'success',
-                    title: response.data,
+                    icon: response.data.Success,
+                    title: response.data.Result,
                     showConfirmButton: false,
                     timer: 1500
                 }).then(() => {
-                    document.getElementById("closeModal").click();
+                    if(response.data.Success){
+                        document.getElementById("closeModal").click();
+                    } else{
+                        document.getElementById("Email").style.borderColor = "red";
+                    }
                 });
             } else {
                 Swal.fire({
@@ -45,7 +52,6 @@ export default function AgregarUsuario({reloadList}) {
                     document.getElementById("closeModal").click();
                 });
             }
-            console.log('Respuesta de la API:', response.data);
         } catch (error) {
             Swal.fire({
                 icon: 'error',
@@ -55,7 +61,6 @@ export default function AgregarUsuario({reloadList}) {
                 timer: 1500
             });
         }
-        console.log(formData);
     };
 
     return (

@@ -23,29 +23,41 @@ export default function EditarUsuario({user, reloadList}) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5002/api/updateUsuario/'+ formData.id, formData);
-            if (response.status === 200) {
-                reloadList();
-                Swal.fire({
-                    icon: 'success',
-                    title: response.data,
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    console.log("Cierra");
-                    document.getElementById("closeModal1").click();
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: response.data,
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    document.getElementById("closeModal1").click();
-                });
-            }
-            console.log('Respuesta de la API:', response.data);
+            Swal.fire({
+                title: '¡Alerta!',
+                text: '¿Estás seguro de quieres editar al usuario '+ user.nombre +'?',
+                html: '<p>¿Estás seguro de quieres editar al usuario <strong>'+ user.nombre +'</strong>?</p>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: '¡Sí, edítalo!'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const response = await axios.post('http://localhost:5002/api/updateUsuario/'+ formData.id, formData);
+                    if (response.status === 200) {
+                        reloadList();
+                        Swal.fire({
+                            icon: 'success',
+                            title: response.data,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        document.getElementById("closeModal1").click();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: response.data,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            document.getElementById("closeModal1").click();
+                        });
+                        
+                    }
+                }
+            });           
         } catch (error) {
             Swal.fire({
                 icon: 'error',
@@ -77,10 +89,6 @@ export default function EditarUsuario({user, reloadList}) {
                             <div className="mb-3">
                                 <label for="Email" className="form-label">Correo electrónico</label>
                                 <input onChange={handleChange} value={formData.email} name='email' type="email" className="form-control" id="Email" aria-describedby="emailHelp"/>
-                            </div>
-                            <div className="mb-3">
-                                <label for="Password" className="form-label">Contraseña</label>
-                                <input onChange={handleChange} value={formData.password} name='password' type="password" className="form-control" id="Password"/>
                             </div>
                             <div className='mb-3'>
                                 <button onClick={(e) => handleSubmit(e)} className="btn btn-primary">Guardar</button>
